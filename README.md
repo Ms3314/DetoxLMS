@@ -8,6 +8,7 @@ Playlists are grouped into **Courses** (the main ones) and **Misc**.
 | --- | --- | --- | --- |
 | [LLM Evaluation](https://www.youtube.com/playlist?list=PLEneLIDJFpcA) | 19 | CampusX | Courses |
 | [FastAPI Tutorials](https://www.youtube.com/playlist?list=PL-osiE80TeTsak-c-QsVeg0YYG_0TeyXI) | 19 | Corey Schafer | Courses |
+| [Computer Vision from Scratch](https://www.youtube.com/playlist?list=PLPTV0NXA_ZSgmWYoSpY_2EJzPJjkke4Az) | 71 | Vizuara | Courses |
 | [LLM Evals](https://www.youtube.com/playlist?list=PLgIaq8VgndJvt-HKMHPXehyJNNXQsAVHD) | 33 | Hamel Husain | Misc |
 
 ## Features

@@ -287,6 +287,7 @@ export default function App() {
             {filtered.map((v) => {
               const isCurrent = v.id === currentVideoId;
               const isWatched = Boolean(watched[v.id]);
+              const position = playlist.videos.findIndex((x) => x.id === v.id);
               return (
                 <li key={v.id}>
                   <button
@@ -300,13 +301,15 @@ export default function App() {
                       {isWatched && <span className="video-watched-badge">✓</span>}
                     </span>
                     <span className="video-text">
-                      <span className="video-title">
+                      <span className="video-title" title={v.title}>
                         <span className="video-index">
-                          {String(
-                            playlist.videos.findIndex((x) => x.id === v.id) + 1
-                          ).padStart(2, "0")}
+                          {String(position + 1).padStart(2, "0")}
                         </span>
-                        {v.title}
+                        {playlist.lectureLabels
+                          ? position === 0
+                            ? "Intro"
+                            : `Lecture ${position}`
+                          : v.title}
                       </span>
                       <span className="video-channel">{v.channel || playlist.name}</span>
                     </span>
