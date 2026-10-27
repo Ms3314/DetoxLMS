@@ -21,6 +21,7 @@ const WATCHED_KEY = "ytch-watched-v1";
 const NOTES_KEY = "ytch-notes-v1";
 const SETTINGS_KEY = "ytch-settings-v1";
 const SIDEBAR_KEY = "ytch-sidebar-open-v1";
+const POSITIONS_KEY = "ytch-positions-v1";
 const SPLIT_KEY = "ytch-notes-width-v1";
 const NOTES_DEFAULT_WIDTH = 380;
 const NOTES_MIN_WIDTH = 280;
@@ -32,6 +33,8 @@ const TOTAL_VIDEOS = PLAYLISTS.reduce((a, p) => a + p.videos.length, 0);
 export default function VideosView() {
   const [watched, setWatched] = useLocalStorage(WATCHED_KEY, {});
   const [notes, setNotes] = useLocalStorage(NOTES_KEY, {});
+  // Last playback position per video, in whole seconds, so playback can resume.
+  const [positions, setPositions] = useLocalStorage(POSITIONS_KEY, {});
   const [settings, setSettings] = useLocalStorage(SETTINGS_KEY, {
     autoplay: true,
     autoMark: true,
@@ -165,7 +168,18 @@ export default function VideosView() {
     if (prev) selectVideo(prev.id);
   };
 
+  const saveProgress = (videoId, seconds) => {
+    const at = Math.floor(seconds);
+    setPositions((p) => (p[videoId] === at ? p : { ...p, [videoId]: at }));
+  };
+
   const handleEnded = () => {
+    setPositions((p) => {
+      if (!(currentVideoId in p)) return p;
+      const next = { ...p };
+      delete next[currentVideoId];
+      return next;
+    });
     if (autoMark) setWatched((w) => ({ ...w, [currentVideoId]: true }));
     if (autoplay) goNext();
   };
@@ -395,7 +409,9 @@ export default function VideosView() {
               <div className="player-wrap">
                 <Player
                   videoId={currentVideo.id}
+                  startAt={positions[currentVideo.id] ?? 0}
                   onEnded={handleEnded}
+                  onProgress={saveProgress}
                 />
               </div>
 

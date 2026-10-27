@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
 const EMBED_BASE = "https://www.youtube-nocookie.com/embed/";
+const PROGRESS_INTERVAL_MS = 5000;
 
 let apiPromise = null;
 function loadYouTubeApi() {
@@ -28,21 +29,42 @@ function loadYouTubeApi() {
  * Embeds a YouTube video with the IFrame API so we can react to the player
  * ending (autoplay next / auto-mark watched). Falls back to a plain iframe
  * if the API never loads.
+ *
+ * `startAt` (seconds) is where playback begins. `onProgress(videoId, seconds)`
+ * is called every few seconds while the video plays, and once more when the
+ * player is torn down, so the position can be resumed later.
  */
-export default function Player({ videoId, onEnded, onReady }) {
+export default function Player({ videoId, startAt = 0, onEnded, onReady, onProgress }) {
   const hostRef = useRef(null);
   const playerRef = useRef(null);
   const endedCb = useRef(onEnded);
   const readyCb = useRef(onReady);
+  const progressCb = useRef(onProgress);
+  const startRef = useRef(startAt);
 
   useEffect(() => {
     endedCb.current = onEnded;
     readyCb.current = onReady;
-  }, [onEnded, onReady]);
+    progressCb.current = onProgress;
+    startRef.current = startAt;
+  }, [onEnded, onReady, onProgress, startAt]);
 
   useEffect(() => {
     let cancelled = false;
     let player = null;
+    let timer = null;
+
+    // Reports where the video is now. Skipped once the video has ended, so a
+    // finished video doesn't store its last second as the resume point.
+    const saveProgress = () => {
+      if (!player?.getCurrentTime || !window.YT) return;
+      try {
+        if (player.getPlayerState() === window.YT.PlayerState.ENDED) return;
+        progressCb.current?.(videoId, player.getCurrentTime());
+      } catch {
+        /* player not ready yet */
+      }
+    };
 
     loadYouTubeApi()
       .then(() => {
@@ -58,6 +80,7 @@ export default function Player({ videoId, onEnded, onReady }) {
             autoplay: 1,
             enablejsapi: 1,
             origin: window.location.origin,
+            start: Math.floor(startRef.current) || undefined,
           },
           events: {
             onReady: (e) => readyCb.current?.(e.target),
@@ -67,12 +90,14 @@ export default function Player({ videoId, onEnded, onReady }) {
           },
         });
         playerRef.current = player;
+        timer = setInterval(saveProgress, PROGRESS_INTERVAL_MS);
       })
       .catch(() => {
-        // Plain iframe fallback — no autoplay-next tracking.
+        // Plain iframe fallback — no autoplay-next or resume tracking.
         if (cancelled || !hostRef.current) return;
         const iframe = document.createElement("iframe");
-        iframe.src = `${EMBED_BASE}${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=1`;
+        const start = Math.floor(startRef.current) || 0;
+        iframe.src = `${EMBED_BASE}${videoId}?rel=0&modestbranding=1&playsinline=1&autoplay=1&start=${start}`;
         iframe.title = "YouTube video player";
         iframe.frameBorder = "0";
         iframe.allow =
@@ -86,6 +111,8 @@ export default function Player({ videoId, onEnded, onReady }) {
 
     return () => {
       cancelled = true;
+      clearInterval(timer);
+      saveProgress();
       if (player && player.destroy) {
         try {
           player.destroy();
