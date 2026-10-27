@@ -1,24 +1,36 @@
+/* Signal Dark — design tokens from the "Samis Deck" design system.
+   Flat black canvas, mono caps labels, yellow as the single focus color. */
 :root {
-  --bg: #0a0b10;
-  --bg-soft: #0e1017;
-  --panel: #131620;
-  --panel-2: #171a26;
-  --border: #232838;
-  --border-soft: #1c2030;
-  --text: #e8eaf2;
-  --text-dim: #9aa1b5;
-  --text-faint: #626b84;
-  --accent: #7c5cff;
-  --accent-2: #4cc9f0;
-  --accent-gradient: linear-gradient(135deg, #7c5cff 0%, #4cc9f0 100%);
-  --green: #34d399;
-  --red: #f87171;
-  --amber: #fbbf24;
-  --radius: 14px;
-  --radius-sm: 9px;
-  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --canvas: #0a0a0a;
+  --surface-1: #111111;
+  --surface-2: #1a1a1a;
+  --line-subtle: #2a2a2a;
+  --line: #6b6b6b;
+  --ink: #f5f5f5;
+  --ink-muted: #a6a6a6;
+  --ink-faint: #858585;
+  --cream: #ece8dc;
+  --cream-ink: #121212;
+  --cream-muted: #55524a;
+  --yellow: #ffd23f;
+  --yellow-wash: #ffd23f26;
+  --blue: #4ea1ff;
+  --blue-wash: #4ea1ff26;
+  --red: #ff5a5f;
+  --red-wash: #ff5a5f26;
+  --on-accent: #0a0a0a;
+  --baseline: #707070;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 16px 32px 0 #000000b3;
+  --shadow-glow-yellow: 0 0 40px 0 #ffd23f40;
+
+  --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 * {
@@ -33,18 +45,15 @@ body,
 
 body {
   margin: 0;
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
+  font-family: var(--font-sans);
+  background: var(--canvas);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
-  background-image:
-    radial-gradient(1200px 600px at 85% -10%, rgba(124, 92, 255, 0.14), transparent 60%),
-    radial-gradient(900px 500px at -10% 110%, rgba(76, 201, 240, 0.08), transparent 55%);
-  background-attachment: fixed;
 }
 
 ::selection {
-  background: rgba(124, 92, 255, 0.4);
+  background: var(--yellow);
+  color: var(--on-accent);
 }
 
 ::-webkit-scrollbar {
@@ -55,17 +64,26 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #262c40;
+  background: var(--surface-2);
   border-radius: 99px;
-  border: 2px solid var(--bg);
+  border: 2px solid var(--canvas);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #33405e;
+  background: var(--line-subtle);
 }
 
 button {
-  font-family: var(--font);
+  font-family: var(--font-sans);
   cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
 }
 
 a {
