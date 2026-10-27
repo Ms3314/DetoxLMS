@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PLAYLISTS } from "../data/playlists";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import Player from "../components/Player";
@@ -21,6 +21,10 @@ const WATCHED_KEY = "ytch-watched-v1";
 const NOTES_KEY = "ytch-notes-v1";
 const SETTINGS_KEY = "ytch-settings-v1";
 const SIDEBAR_KEY = "ytch-sidebar-open-v1";
+const SPLIT_KEY = "ytch-notes-width-v1";
+const NOTES_DEFAULT_WIDTH = 380;
+const NOTES_MIN_WIDTH = 280;
+const VIDEO_MIN_WIDTH = 360;
 
 const TOTAL_VIDEOS = PLAYLISTS.reduce((a, p) => a + p.videos.length, 0);
 
@@ -44,6 +48,37 @@ export default function VideosView() {
   const [query, setQuery] = useState("");
   const [showAllNotes, setShowAllNotes] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useLocalStorage(SIDEBAR_KEY, true);
+
+  // Width of the notepad column beside the video; the divider between them is draggable.
+  const [notesWidth, setNotesWidth] = useLocalStorage(SPLIT_KEY, NOTES_DEFAULT_WIDTH);
+  const studyRef = useRef(null);
+
+  const clampNotesWidth = (w) => {
+    const max = Math.max(NOTES_MIN_WIDTH, (studyRef.current?.clientWidth ?? 1200) - VIDEO_MIN_WIDTH);
+    return Math.min(max, Math.max(NOTES_MIN_WIDTH, Math.round(w)));
+  };
+
+  const startResize = (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = notesWidth;
+    const onMove = (ev) => setNotesWidth(clampNotesWidth(startWidth - (ev.clientX - startX)));
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      document.body.style.userSelect = "";
+    };
+    document.body.style.userSelect = "none";
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
+  const resizeWithKeys = (e) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    const step = e.key === "ArrowLeft" ? 24 : -24;
+    setNotesWidth((w) => clampNotesWidth(w + step));
+  };
 
   const playlist =
     PLAYLISTS.find((p) => p.id === activePlaylistId) ?? PLAYLISTS[0];
@@ -351,7 +386,11 @@ export default function VideosView() {
         {/* ── Main content ───────────────────────── */}
         <section className="content">
           {currentVideo ? (
-            <div className="study">
+            <div
+              className="study"
+              ref={studyRef}
+              style={{ "--notes-w": `${notesWidth}px` }}
+            >
               <div className="study-video">
               <div className="player-wrap">
                 <Player
@@ -431,6 +470,19 @@ export default function VideosView() {
                 onExport={exportAll}
               />
               </div>
+
+              <div
+                className="study-resizer"
+                role="separator"
+                aria-orientation="vertical"
+                aria-label="Resize notepad"
+                aria-valuenow={notesWidth}
+                tabIndex={0}
+                title="Drag to resize. Double-click to reset."
+                onPointerDown={startResize}
+                onKeyDown={resizeWithKeys}
+                onDoubleClick={() => setNotesWidth(NOTES_DEFAULT_WIDTH)}
+              />
 
               <div className="study-notes">
                 <Notepad />

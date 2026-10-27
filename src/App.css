@@ -670,9 +670,39 @@
 /* Study split: video on the left, notes beside it on the right. */
 .study {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) 24px var(--notes-w, 380px);
   align-items: start;
+}
+
+/* Draggable divider between the video and the notepad. */
+.study-resizer {
+  position: relative;
+  align-self: stretch;
+  min-height: 200px;
+  cursor: col-resize;
+  touch-action: none;
+  border-radius: var(--radius-sm);
+}
+
+.study-resizer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--line-subtle);
+  transition: background 0.15s;
+}
+
+.study-resizer:hover::after,
+.study-resizer:focus-visible::after {
+  background: var(--yellow);
+}
+
+.study-resizer:focus-visible {
+  outline: none;
 }
 
 .study-video {
@@ -1448,6 +1478,10 @@
 
   .study {
     grid-template-columns: 1fr;
+  }
+
+  .study-resizer {
+    display: none;
   }
 
   .study-notes {
