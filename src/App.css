@@ -667,6 +667,125 @@
   border: 0;
 }
 
+/* Study split: video on the left, notes beside it on the right. */
+.study {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px var(--notes-w, 380px);
+  align-items: start;
+}
+
+/* Draggable divider between the video and the notepad. */
+.study-resizer {
+  position: relative;
+  align-self: stretch;
+  min-height: 200px;
+  cursor: col-resize;
+  touch-action: none;
+  border-radius: var(--radius-sm);
+}
+
+.study-resizer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--line-subtle);
+  transition: background 0.15s;
+}
+
+.study-resizer:hover::after,
+.study-resizer:focus-visible::after {
+  background: var(--yellow);
+}
+
+.study-resizer:focus-visible {
+  outline: none;
+}
+
+.study-video {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.study-notes {
+  position: sticky;
+  top: 90px;
+  min-width: 0;
+}
+
+.notepad {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: calc(100vh - 130px);
+  padding: 20px;
+  border: 2px solid var(--line-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+}
+
+.notepad-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notepad-title {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 600 22px/1.2 var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+.notepad-title::placeholder,
+.notepad-body::placeholder {
+  color: var(--ink-faint);
+}
+
+.notepad-title:focus,
+.notepad-body:focus {
+  outline: none;
+}
+
+.notepad-empty {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.notepad-body {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 16px/1.75 var(--font-sans);
+  resize: none;
+}
+
+.notepad-body::placeholder {
+  color: var(--ink-faint);
+}
+
+.notepad-body:focus {
+  outline: none;
+}
+
+.layout.no-sidebar {
+  grid-template-columns: 1fr;
+}
+
 .video-info {
   display: flex;
   justify-content: space-between;
@@ -1355,6 +1474,22 @@
 
   .notes-for {
     display: none;
+  }
+
+  .study {
+    grid-template-columns: 1fr;
+  }
+
+  .study-resizer {
+    display: none;
+  }
+
+  .study-notes {
+    position: static;
+  }
+
+  .notepad {
+    height: 60vh;
   }
 
   .pages-view {

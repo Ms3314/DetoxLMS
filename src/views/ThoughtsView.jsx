@@ -1,30 +1,9 @@
 import { useState } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { formatTimestamp, newId } from "../lib/workspace";
-
-// Multiple blank pages, saved automatically to this browser.
-const PAGES_KEY = "ytch-thoughts-pages-v1";
-// The single-page key from before multi-page support; migrated on first load.
-const LEGACY_PAGE_KEY = "ytch-thoughts-page-v1";
-
-function makePage(seed = {}) {
-  return { id: newId(), title: "", body: "", ts: Date.now(), ...seed };
-}
-
-function initialPages() {
-  try {
-    const legacy = JSON.parse(window.localStorage.getItem(LEGACY_PAGE_KEY) ?? "null");
-    if (legacy && (legacy.title || legacy.body)) {
-      return [makePage({ title: legacy.title ?? "", body: legacy.body ?? "" })];
-    }
-  } catch {
-    /* ignore unreadable legacy data */
-  }
-  return [makePage()];
-}
+import { formatTimestamp } from "../lib/workspace";
+import { makePage, usePages } from "../hooks/usePages";
 
 export default function ThoughtsView() {
-  const [pages, setPages] = useLocalStorage(PAGES_KEY, initialPages);
+  const [pages, setPages] = usePages();
   const [activeId, setActiveId] = useState(() => pages[0]?.id ?? null);
 
   const active = pages.find((p) => p.id === activeId) ?? pages[0] ?? null;
