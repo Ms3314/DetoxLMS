@@ -688,9 +688,46 @@
   min-width: 0;
 }
 
-.study-notes .notes-panel {
-  max-height: calc(100vh - 130px);
-  overflow-y: auto;
+.notepad {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: calc(100vh - 130px);
+  padding: 20px;
+  border: 2px solid var(--line-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+}
+
+.notepad-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notepad-body {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 16px/1.75 var(--font-sans);
+  resize: none;
+}
+
+.notepad-body::placeholder {
+  color: var(--ink-faint);
+}
+
+.notepad-body:focus {
+  outline: none;
+}
+
+.layout.no-sidebar {
+  grid-template-columns: 1fr;
 }
 
 .video-info {
@@ -1391,8 +1428,8 @@
     position: static;
   }
 
-  .study-notes .notes-panel {
-    max-height: none;
+  .notepad {
+    height: 60vh;
   }
 
   .pages-view {

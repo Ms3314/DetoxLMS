@@ -4,6 +4,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import Player from "../components/Player";
 import NotesPanel from "../components/NotesPanel";
 import AllNotesModal from "../components/AllNotesModal";
+import Notepad from "../components/Notepad";
 import {
   formatSeconds,
   overallProgress,
@@ -19,6 +20,7 @@ const DEFAULT_KEY = "ytch-last-video"; // not used as watched store, used for re
 const WATCHED_KEY = "ytch-watched-v1";
 const NOTES_KEY = "ytch-notes-v1";
 const SETTINGS_KEY = "ytch-settings-v1";
+const SIDEBAR_KEY = "ytch-sidebar-open-v1";
 
 const TOTAL_VIDEOS = PLAYLISTS.reduce((a, p) => a + p.videos.length, 0);
 
@@ -41,6 +43,7 @@ export default function VideosView() {
   );
   const [query, setQuery] = useState("");
   const [showAllNotes, setShowAllNotes] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useLocalStorage(SIDEBAR_KEY, true);
 
   const playlist =
     PLAYLISTS.find((p) => p.id === activePlaylistId) ?? PLAYLISTS[0];
@@ -214,6 +217,14 @@ export default function VideosView() {
             <span className="toggle-ui" />
             <span>Auto-mark</span>
           </label>
+          <button
+            type="button"
+            className="btn-ghost"
+            aria-expanded={sidebarOpen}
+            onClick={() => setSidebarOpen((open) => !open)}
+          >
+            {sidebarOpen ? "Hide courses" : "Show courses"}
+          </button>
           <button type="button" className="btn-ghost" onClick={() => setShowAllNotes(true)}>
             All notes
           </button>
@@ -223,8 +234,9 @@ export default function VideosView() {
         </div>
       </div>
 
-      <main className="layout">
+      <main className={`layout${sidebarOpen ? "" : " no-sidebar"}`}>
         {/* ── Sidebar ─────────────────────────────── */}
+        {sidebarOpen && (
         <aside className="sidebar">
           <div className="playlist-sections">
             {["Courses", "Misc"].map((group) => {
@@ -334,6 +346,7 @@ export default function VideosView() {
             )}
           </ul>
         </aside>
+        )}
 
         {/* ── Main content ───────────────────────── */}
         <section className="content">
@@ -408,9 +421,7 @@ export default function VideosView() {
                   </a>
                 </div>
               </div>
-              </div>
 
-              <div className="study-notes">
               <NotesPanel
                 videoId={currentVideo.id}
                 title={currentVideo.title}
@@ -419,6 +430,10 @@ export default function VideosView() {
                 onDelete={deleteNote}
                 onExport={exportAll}
               />
+              </div>
+
+              <div className="study-notes">
+                <Notepad />
               </div>
             </div>
           ) : (
