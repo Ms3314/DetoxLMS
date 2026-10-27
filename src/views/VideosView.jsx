@@ -170,6 +170,18 @@ export default function VideosView() {
 
   const saveProgress = (videoId, seconds) => {
     const at = Math.floor(seconds);
+    if (at < 1) return;
+    // Write to localStorage directly as well: this also runs while the view is
+    // unmounting (switching sections), when React state updates are dropped.
+    let stored = {};
+    try {
+      stored = JSON.parse(window.localStorage.getItem(POSITIONS_KEY) ?? "{}") ?? {};
+    } catch {
+      stored = {};
+    }
+    if (stored[videoId] !== at) {
+      window.localStorage.setItem(POSITIONS_KEY, JSON.stringify({ ...stored, [videoId]: at }));
+    }
     setPositions((p) => (p[videoId] === at ? p : { ...p, [videoId]: at }));
   };
 

@@ -54,12 +54,17 @@ export default function Player({ videoId, startAt = 0, onEnded, onReady, onProgr
     let player = null;
     let timer = null;
 
-    // Reports where the video is now. Skipped once the video has ended, so a
-    // finished video doesn't store its last second as the resume point.
+    // Reports where the video is now. Only while it is actually playing or
+    // paused: while it is still loading or seeking, the time is not a real
+    // position and must not replace the saved one. Ended videos are skipped too.
     const saveProgress = () => {
       if (!player?.getCurrentTime || !window.YT) return;
       try {
-        if (player.getPlayerState() === window.YT.PlayerState.ENDED) return;
+        const state = player.getPlayerState();
+        const hasPosition =
+          state === window.YT.PlayerState.PLAYING ||
+          state === window.YT.PlayerState.PAUSED;
+        if (!hasPosition) return;
         progressCb.current?.(videoId, player.getCurrentTime());
       } catch {
         /* player not ready yet */
@@ -91,6 +96,8 @@ export default function Player({ videoId, startAt = 0, onEnded, onReady, onProgr
         });
         playerRef.current = player;
         timer = setInterval(saveProgress, PROGRESS_INTERVAL_MS);
+        // Refreshing or closing the tab skips React cleanup, so save on the way out too.
+        window.addEventListener("pagehide", saveProgress);
       })
       .catch(() => {
         // Plain iframe fallback — no autoplay-next or resume tracking.
@@ -112,6 +119,7 @@ export default function Player({ videoId, startAt = 0, onEnded, onReady, onProgr
     return () => {
       cancelled = true;
       clearInterval(timer);
+      window.removeEventListener("pagehide", saveProgress);
       saveProgress();
       if (player && player.destroy) {
         try {
