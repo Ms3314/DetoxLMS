@@ -338,7 +338,8 @@ export default function VideosView() {
         {/* ── Main content ───────────────────────── */}
         <section className="content">
           {currentVideo ? (
-            <>
+            <div className="study">
+              <div className="study-video">
               <div className="player-wrap">
                 <Player
                   videoId={currentVideo.id}
@@ -407,7 +408,9 @@ export default function VideosView() {
                   </a>
                 </div>
               </div>
+              </div>
 
+              <div className="study-notes">
               <NotesPanel
                 videoId={currentVideo.id}
                 title={currentVideo.title}
@@ -416,7 +419,8 @@ export default function VideosView() {
                 onDelete={deleteNote}
                 onExport={exportAll}
               />
-            </>
+              </div>
+            </div>
           ) : (
             <div className="content-empty">
               <h2>Select a video to start learning</h2>

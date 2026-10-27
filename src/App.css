@@ -667,6 +667,32 @@
   border: 0;
 }
 
+/* Study split: video on the left, notes beside it on the right. */
+.study {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  gap: 24px;
+  align-items: start;
+}
+
+.study-video {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.study-notes {
+  position: sticky;
+  top: 90px;
+  min-width: 0;
+}
+
+.study-notes .notes-panel {
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+}
+
 .video-info {
   display: flex;
   justify-content: space-between;
@@ -1355,6 +1381,18 @@
 
   .notes-for {
     display: none;
+  }
+
+  .study {
+    grid-template-columns: 1fr;
+  }
+
+  .study-notes {
+    position: static;
+  }
+
+  .study-notes .notes-panel {
+    max-height: none;
   }
 
   .pages-view {
