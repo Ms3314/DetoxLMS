@@ -57,7 +57,7 @@ export default function ThoughtsView() {
               <input
                 className="page-title"
                 type="text"
-                placeholder="Sami Labs"
+                placeholder="Untitled page"
                 aria-label="Page title"
                 value={active.title}
                 onChange={(e) => updateActive({ title: e.target.value })}

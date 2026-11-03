@@ -1,7 +1,7 @@
 import { useLocalStorage } from "./useLocalStorage";
 import { newId } from "../lib/workspace";
 
-// Shared by the Sami Labs section and the notepad beside the video, so both
+// Shared by the Pages section and the notepad beside the video, so both
 // read and write the same pages.
 export const PAGES_KEY = "ytch-thoughts-pages-v1";
 // The single-page key from before multi-page support; migrated on first load.

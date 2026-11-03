@@ -2,7 +2,7 @@ import { useState } from "react";
 import { makePage, usePages } from "../hooks/usePages";
 
 /**
- * Notepad beside the video. Reads and writes the same pages as the Sami Labs
+ * Notepad beside the video. Reads and writes the same pages as the Pages
  * section, so anything written here shows up there and the other way round.
  */
 export default function Notepad() {
@@ -53,7 +53,7 @@ export default function Notepad() {
           <input
             className="notepad-title"
             type="text"
-            placeholder="Sami Labs"
+            placeholder="Untitled page"
             aria-label="Notepad title"
             value={page.title}
             onChange={(e) => updatePage({ title: e.target.value })}
@@ -66,7 +66,7 @@ export default function Notepad() {
             onChange={(e) => updatePage({ body: e.target.value })}
           />
           <p className="page-status">
-            {words} {words === 1 ? "word" : "words"} · Synced with Sami Labs
+            {words} {words === 1 ? "word" : "words"} · Synced with Pages
           </p>
         </>
       ) : (

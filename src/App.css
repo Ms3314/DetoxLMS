@@ -64,6 +64,7 @@
   font: 500 13px/1 var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  text-decoration: none;
   transition: color 0.15s, border-color 0.15s;
 }
 
