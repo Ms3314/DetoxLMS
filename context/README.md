@@ -59,3 +59,14 @@ The other files describe the pre-milestone app; where they conflict, this sectio
   `src/lib/playback.ts` (direct localStorage), and reuses `Player` and `Notepad`.
 - No voluntary pause; "End session" opens an in-page confirm (never `window.confirm`, which would
   steal focus and count as leaving).
+
+## Merged Focus + Library page (still on branch `focus-screen`)
+
+Supersedes the routes and setup screen described above:
+
+- Nav is **Focus / Pages / Todos**. `/` is the Library (courses sidebar, player, notes, notepad) with a
+  **focus bar** (`src/focus/FocusBar.tsx`) under the stats bar; `/library` redirects to `/`.
+- The focus bar starts a session on the video currently selected in the sidebar; the chosen length is
+  remembered in `ytch-focus-length-v1`. `FocusView` renders `VideosView` when idle and swaps in the
+  countdown, locked screen or summary while a session exists. The old `FocusSetup` screen is gone.
+- `.d.ts` files next to `Player.jsx` and `useLocalStorage.js` give those JS modules types for TS callers.

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import FocusScreen from "../focus/FocusScreen";
-import FocusSetup, { type StartParams } from "../focus/FocusSetup";
+import VideosView from "./VideosView";
+import type { StartParams } from "../focus/start";
 import FocusSummary from "../focus/FocusSummary";
 import { isActive } from "../focus/engine";
 import { enterFocusFullscreen, exitFocusFullscreen } from "../focus/presence";
@@ -8,7 +9,10 @@ import { useFocusSession } from "../focus/useFocusSession";
 
 const COUNTDOWN_SECONDS = 3;
 
-/** Focus home: set up a session, count in, lock the screen, then summarise. */
+/**
+ * The home page: the study view (courses, player, notes) with a focus bar. Starting a
+ * session counts in, locks the screen, then shows a summary.
+ */
 export default function FocusView() {
   const { active, record, start, endNow, returnNow, setVideo, dismiss } = useFocusSession();
   const [countdown, setCountdown] = useState<{ left: number; params: StartParams } | null>(null);
@@ -57,5 +61,5 @@ export default function FocusView() {
 
   if (active) return <FocusSummary active={active} record={record} onDone={dismiss} />;
 
-  return <FocusSetup onStart={begin} />;
+  return <VideosView onStartFocus={begin} />;
 }

@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { PLAYLISTS } from "../data/playlists";
 import type { FocusSession } from "./engine";
 import { formatDuration } from "./format";
@@ -74,11 +73,8 @@ export default function FocusSummary({ active, record, onDone }: Props) {
 
       <div className="focus-dialog-actions">
         <button type="button" className="btn-accent" onClick={onDone}>
-          Back to start
+          Back to courses
         </button>
-        <Link className="btn-ghost" to="/library" onClick={onDone}>
-          Open library
-        </Link>
       </div>
     </div>
   );
