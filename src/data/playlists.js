@@ -1028,7 +1028,7 @@ export const PLAYLISTS = [
   },
   {
     "id": "PLKnIA16_RmvYuZauWaPlRTC54KxSNLtNn",
-    "name": "100 Days of Deep Learning",
+    "name": "What Is Sami Learning",
     "url": "https://www.youtube.com/playlist?list=PLKnIA16_RmvYuZauWaPlRTC54KxSNLtNn",
     "videos": [
       {
