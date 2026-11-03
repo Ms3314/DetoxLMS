@@ -1,7 +1,6 @@
 import { BrowserRouter, Navigate, NavLink, Route, Routes } from "react-router-dom";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import FocusView from "./views/FocusView";
-import VideosView from "./views/VideosView";
 import ThoughtsView from "./views/ThoughtsView";
 import TodosView from "./views/TodosView";
 import { BRAND_NAME } from "./lib/brand";
@@ -12,7 +11,6 @@ const TODOS_KEY = "ytch-todos-v1";
 
 const SECTIONS = [
   { path: "/", label: "Focus", end: true },
-  { path: "/library", label: "Library" },
   { path: "/pages", label: "Pages" },
   { path: "/todos", label: "Todos" },
 ];
@@ -51,7 +49,7 @@ export default function App() {
         <div className="app-body">
           <Routes>
             <Route path="/" element={<FocusView />} />
-            <Route path="/library" element={<VideosView />} />
+            <Route path="/library" element={<Navigate to="/" replace />} />
             <Route path="/pages" element={<ThoughtsView />} />
             <Route
               path="/todos"

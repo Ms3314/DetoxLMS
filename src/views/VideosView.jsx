@@ -5,6 +5,7 @@ import Player from "../components/Player";
 import NotesPanel from "../components/NotesPanel";
 import AllNotesModal from "../components/AllNotesModal";
 import Notepad from "../components/Notepad";
+import FocusBar from "../focus/FocusBar";
 import {
   formatSeconds,
   overallProgress,
@@ -29,8 +30,12 @@ const VIDEO_MIN_WIDTH = 360;
 
 const TOTAL_VIDEOS = PLAYLISTS.reduce((a, p) => a + p.videos.length, 0);
 
-/** The YouTube section: playlists, embedded player, watch tracking and notes. */
-export default function VideosView() {
+/**
+ * The study page: playlists, embedded player, watch tracking and notes.
+ * When `onStartFocus` is given, a focus bar above the courses starts a locked
+ * session on the video currently selected here.
+ */
+export default function VideosView({ onStartFocus }) {
   const [watched, setWatched] = useLocalStorage(WATCHED_KEY, {});
   const [notes, setNotes] = useLocalStorage(NOTES_KEY, {});
   // Last playback position per video, in whole seconds, so playback can resume.
@@ -294,6 +299,14 @@ export default function VideosView() {
           </button>
         </div>
       </div>
+
+      {onStartFocus && (
+        <FocusBar
+          onStart={(targetMs) =>
+            onStartFocus({ playlistId: playlist.id, videoId: currentVideo.id, targetMs })
+          }
+        />
+      )}
 
       <main className={`layout${sidebarOpen ? "" : " no-sidebar"}`}>
         {/* ── Sidebar ─────────────────────────────── */}
