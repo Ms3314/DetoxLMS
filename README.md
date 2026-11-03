@@ -1,4 +1,4 @@
-# Course Hub · YouTube Playlists + Notes
+# DetoxLMS · Focus on YouTube Courses
 
 A dark-themed React app for finishing YouTube course playlists:
 embedded video player, watch tracking, and per-video notes.
