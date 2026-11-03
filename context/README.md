@@ -41,3 +41,21 @@ The other files describe the pre-milestone app; where they conflict, this sectio
   10 min minimum, 12 h daily cap), `engine.ts` (session state machine), `stats.ts` (counted hours,
   streak eligibility, daily cap, ranks). A strike is an absence that outlasts the grace period.
 - Plan and decisions: `plans/focus-platform-plan.md`.
+
+## Milestone 2 (branch `focus-screen`): the focus session
+
+- `/` now runs a real session: `FocusView` (setup -> 3 s countdown -> locked screen -> summary).
+  Setup (`src/focus/FocusSetup.tsx`) picks a course, start video and length; Start is a click so
+  fullscreen is allowed. Singles and user playlists are not part of this milestone.
+- `src/focus/useFocusSession.ts` ticks the engine every 250 ms and turns visibility, window focus
+  and fullscreen changes into leave/return events (`presence.ts`). `document.hasFocus()` is used
+  because it stays true while focus is inside the YouTube iframe. Fullscreen is only *required* if
+  it actually started and the device is not touch-based; Esc is captured via Keyboard Lock (Chromium).
+- A heartbeat is saved every second to `ytch-focus-active-v1`. On reload the page being gone counts
+  as leaving at the last heartbeat, so the engine's grace/strike/away rules decide if it survives.
+- Finished sessions are appended once to `ytch-focus-log-v1` (`SessionRecord`, includes `countedMs`
+  after the 10 min minimum and 12 h daily cap). Home and summary derive today/total/rank from it.
+- The focus screen shares watched flags, resume positions and last video with the Library through
+  `src/lib/playback.ts` (direct localStorage), and reuses `Player` and `Notepad`.
+- No voluntary pause; "End session" opens an in-page confirm (never `window.confirm`, which would
+  steal focus and count as leaving).
