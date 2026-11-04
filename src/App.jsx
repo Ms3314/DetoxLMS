@@ -3,6 +3,10 @@ import { useLocalStorage } from "./hooks/useLocalStorage";
 import FocusView from "./views/FocusView";
 import ThoughtsView from "./views/ThoughtsView";
 import TodosView from "./views/TodosView";
+import AuthProvider from "./auth/AuthProvider";
+import AccountNav from "./auth/AccountNav";
+import AuthView from "./views/AuthView";
+import ProfileView from "./views/ProfileView";
 import { BRAND_NAME } from "./lib/brand";
 import "./App.css";
 
@@ -23,6 +27,7 @@ export default function App() {
   };
 
   return (
+    <AuthProvider>
     <BrowserRouter>
       <div className="app">
         <header className="topbar">
@@ -43,6 +48,7 @@ export default function App() {
                 {badge[s.path] > 0 && <span className="nav-count">{badge[s.path]}</span>}
               </NavLink>
             ))}
+            <AccountNav />
           </nav>
         </header>
 
@@ -55,10 +61,13 @@ export default function App() {
               path="/todos"
               element={<TodosView todos={todos} setTodos={setTodos} />}
             />
+            <Route path="/login" element={<AuthView />} />
+            <Route path="/profile" element={<ProfileView />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </div>
     </BrowserRouter>
+    </AuthProvider>
   );
 }

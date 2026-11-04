@@ -6,6 +6,8 @@ import FocusSummary from "../focus/FocusSummary";
 import { isActive } from "../focus/engine";
 import { enterFocusFullscreen, exitFocusFullscreen } from "../focus/presence";
 import { useFocusSession } from "../focus/useFocusSession";
+import { useAuth } from "../auth/context";
+import { pushRecords } from "../profile/cloud";
 
 const COUNTDOWN_SECONDS = 3;
 
@@ -15,6 +17,7 @@ const COUNTDOWN_SECONDS = 3;
  */
 export default function FocusView() {
   const { active, record, start, endNow, returnNow, setVideo, dismiss } = useFocusSession();
+  const { user } = useAuth();
   const [countdown, setCountdown] = useState<{ left: number; params: StartParams } | null>(null);
 
   useEffect(() => {
@@ -29,6 +32,12 @@ export default function FocusView() {
     }, 1000);
     return () => clearTimeout(t);
   }, [countdown, start]);
+
+  // Signed-in users get each finished session saved to their account. If the upload
+  // fails it stays "not synced" and the profile page offers to import it later.
+  useEffect(() => {
+    if (record && user) pushRecords(user.id, [record]).catch(() => {});
+  }, [record, user]);
 
   const begin = (params: StartParams) => {
     // Fullscreen needs this click, so request it before the countdown begins.

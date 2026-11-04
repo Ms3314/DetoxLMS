@@ -70,3 +70,19 @@ Supersedes the routes and setup screen described above:
   remembered in `ytch-focus-length-v1`. `FocusView` renders `VideosView` when idle and swaps in the
   countdown, locked screen or summary while a session exists. The old `FocusSetup` screen is gone.
 - `.d.ts` files next to `Player.jsx` and `useLocalStorage.js` give those JS modules types for TS callers.
+
+## Accounts and profile (branch `profile-auth`)
+
+- **Email + username + password** accounts through Supabase Auth (no Google). Setup steps and the
+  SQL for the `profiles` and `focus_sessions` tables are in `supabase/README.md` and `supabase/schema.sql`.
+  Env vars `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` live in git-ignored `.env.local`
+  (template: `.env.example`). Without them the app runs guest-only and `/login` explains why.
+- `src/lib/supabase.ts` (client or null), `src/auth/` (`AuthProvider`, `useAuth`, `AccountNav`,
+  `validation.ts`), `src/views/AuthView.tsx` (`/login`), `src/views/ProfileView.tsx` (`/profile`,
+  redirects to `/login` when signed out). Nav shows "Log in" or "Profile".
+- Finished sessions still go to the local log first. When signed in, `FocusView` also uploads each
+  one (`src/profile/cloud.ts`, idempotent on `user_id + local_id`). The profile reads from the cloud and
+  offers an "Import them" banner for sessions recorded on this device before login.
+- Profile stats are pure (`src/profile/stats.ts`): today / 7 / 30 days / total hours, rank progress,
+  streak, last-7-days bars. Counted hours come from the browser, so they are not tamper-proof yet.
+- Not built yet: public profile page, heatmap, "currently watching", username change, password reset.
